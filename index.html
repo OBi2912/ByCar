@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ByCar - Used & New Cars</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="#home">
+                    <h1>ByCar</h1>
+                </a>
+            </div>
+            <nav class="main-navigation">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#inventory" class="nav-link">Inventory</a>
+                <a href="#sell-car" class="nav-link">Sell Your Car</a>
+                <a href="#services" class="nav-link">Services</a>
+                <a href="#financing" class="nav-link">Financing</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#faq" class="nav-link">FAQ</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </nav>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h2>Find Your Perfect Car</h2>
+                <p>Discover a wide selection of quality used and new vehicles at competitive prices.</p>
+                <a href="#inventory" class="cta-button">Browse Inventory</a>
+            </div>
+        </section>
+
+        <section id="inventory" class="inventory">
+            <div class="container">
+                <h2>Our Inventory</h2>
+                <div class="filters">
+                    <select id="condition-filter">
+                        <option value="all">All Conditions</option>
+                        <option value="new">New</option>
+                        <option value="used">Used</option>
+                    </select>
+                    <input type="text" id="search-input" placeholder="Search by make, model, or year...">
+                </div>
+                <div id="car-listings" class="car-listings">
+                    <!-- Car cards will be dynamically inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <section id="sell-car" class="sell-car">
+            <div class="container">
+                <h2>Sell Your Car</h2>
+                <p>Ready to sell your vehicle? List it with us and reach thousands of potential buyers.</p>
+
+                <div class="sell-form-container">
+                    <form id="sell-car-form" class="sell-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="seller-name">Your Name *</label>
+                                <input type="text" id="seller-name" name="sellerName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="seller-email">Email *</label>
+                                <input type="email" id="seller-email" name="sellerEmail" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="seller-phone">Phone Number</label>
+                                <input type="tel" id="seller-phone" name="sellerPhone">
+                            </div>
+                            <div class="form-group">
+                                <label for="seller-location">Location</label>
+                                <input type="text" id="seller-location" name="sellerLocation" placeholder="City, State">
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>Vehicle Information</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="car-make">Make *</label>
+                                    <input type="text" id="car-make" name="carMake" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="car-model">Model *</label>
+                                    <input type="text" id="car-model" name="carModel" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="car-year">Year *</label>
+                                    <input type="number" id="car-year" name="carYear" min="1900" max="2025" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="car-mileage">Mileage *</label>
+                                    <input type="number" id="car-mileage" name="carMileage" min="0" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="car-price">Asking Price *</label>
+                                    <input type="number" id="car-price" name="carPrice" min="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="car-condition">Condition *</label>
+                                    <select id="car-condition" name="carCondition" required>
+                                        <option value="">Select Condition</option>
+                                        <option value="new">New</option>
+                                        <option value="used">Used</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="car-color">Color</label>
+                                    <input type="text" id="car-color" name="carColor">
+                                </div>
+                                <div class="form-group">
+                                    <label for="car-transmission">Transmission</label>
+                                    <select id="car-transmission" name="carTransmission">
+                                        <option value="">Select Transmission</option>
+                                        <option value="automatic">Automatic</option>
+                                        <option value="manual">Manual</option>
+                                        <option value="cvt">CVT</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-description">Description</label>
+                                <textarea id="car-description" name="carDescription" rows="4" placeholder="Describe your vehicle, including any features, modifications, or additional information..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-features">Features (optional)</label>
+                                <input type="text" id="car-features" name="carFeatures" placeholder="e.g., Navigation, Leather Seats, Sunroof (separate with commas)">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-image">Vehicle Image URL</label>
+                                <input type="url" id="car-image" name="carImage" placeholder="https://example.com/car-image.jpg">
+                                <small class="form-help">Provide a URL to your vehicle's photo (optional)</small>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="submit-btn">List My Car</button>
+                            <p class="form-note">* Required fields. We'll review your listing and contact you within 24 hours.</p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact">
+            <div class="container">
+                <h2>Contact Us</h2>
+                <p>Get in touch with our team. We're here to help you find your perfect vehicle or answer any questions.</p>
+
+                <div class="contact-content">
+                    <div class="contact-form-section">
+                        <h3>Send us a Message</h3>
+                        <form id="contact-form" class="contact-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="contact-name">Name *</label>
+                                    <input type="text" id="contact-name" name="contactName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="contact-email">Email *</label>
+                                    <input type="email" id="contact-email" name="contactEmail" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="contact-phone">Phone</label>
+                                    <input type="tel" id="contact-phone" name="contactPhone">
+                                </div>
+                                <div class="form-group">
+                                    <label for="contact-subject">Subject *</label>
+                                    <select id="contact-subject" name="contactSubject" required>
+                                        <option value="">Select Subject</option>
+                                        <option value="general">General Inquiry</option>
+                                        <option value="sales">Vehicle Sales</option>
+                                        <option value="service">Service</option>
+                                        <option value="parts">Parts</option>
+                                        <option value="financing">Financing</option>
+                                        <option value="trade-in">Trade-In</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="contact-message">Message *</label>
+                                <textarea id="contact-message" name="contactMessage" rows="5" required placeholder="Tell us how we can help you..."></textarea>
+                            </div>
+
+                            <button type="submit" class="submit-btn">Send Message</button>
+                        </form>
+                    </div>
+
+                    <div class="contact-info-section">
+                        <h3>Get in Touch</h3>
+
+                        <div class="contact-methods">
+                            <div class="contact-method">
+                                <div class="contact-icon">📞</div>
+                                <div class="contact-details">
+                                    <h4>Phone</h4>
+                                    <p>(555) 123-4567</p>
+                                    <p>1-800-BYCAR-01 (Toll-Free)</p>
+                                </div>
+                            </div>
+
+                            <div class="contact-method">
+                                <div class="contact-icon">📧</div>
+                                <div class="contact-details">
+                                    <h4>Email</h4>
+                                    <p>info@bycar.com</p>
+                                    <p>sales@bycar.com</p>
+                                </div>
+                            </div>
+
+                            <div class="contact-method">
+                                <div class="contact-icon">📍</div>
+                                <div class="contact-details">
+                                    <h4>Visit Us</h4>
+                                    <p>123 Auto Plaza Drive<br>Suite 100<br>Car City, CC 12345</p>
+                                </div>
+                            </div>
+
+                            <div class="contact-method">
+                                <div class="contact-icon">🕒</div>
+                                <div class="contact-details">
+                                    <h4>Business Hours</h4>
+                                    <p>Mon-Fri: 9:00 AM - 8:00 PM</p>
+                                    <p>Sat: 9:00 AM - 6:00 PM</p>
+                                    <p>Sun: 11:00 AM - 5:00 PM</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="contact-map">
+                            <h4>Find Us</h4>
+                            <div class="map-placeholder">
+                                <div class="map-content">
+                                    <span>🗺️ Interactive Map</span>
+                                    <p>123 Auto Plaza Drive, Car City, CC 12345</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="services" class="services">
+            <div class="container">
+                <h2>Our Services</h2>
+                <p>Comprehensive automotive services to keep your vehicle running smoothly.</p>
+
+                <div class="services-grid">
+                    <div class="service-card">
+                        <div class="service-icon">🔧</div>
+                        <h3>Maintenance & Repair</h3>
+                        <p>Complete vehicle maintenance and repair services with certified technicians.</p>
+                        <ul>
+                            <li>Oil changes & filter replacement</li>
+                            <li>Brake service & repair</li>
+                            <li>Engine diagnostics</li>
+                            <li>Tire rotation & replacement</li>
+                        </ul>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">🛠️</div>
+                        <h3>Detailing & Restoration</h3>
+                        <p>Professional detailing services to keep your vehicle looking its best.</p>
+                        <ul>
+                            <li>Interior & exterior detailing</li>
+                            <li>Paint protection & waxing</li>
+                            <li>Headlight restoration</li>
+                            <li>Leather conditioning</li>
+                        </ul>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">⚡</div>
+                        <h3>Performance Upgrades</h3>
+                        <p>Enhance your vehicle's performance with our expert modifications.</p>
+                        <ul>
+                            <li>Engine tuning & upgrades</li>
+                            <li>Exhaust system improvements</li>
+                            <li>Suspension enhancements</li>
+                            <li>Cold air intake systems</li>
+                        </ul>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">🔍</div>
+                        <h3>Vehicle Inspection</h3>
+                        <p>Thorough vehicle inspections for safety and peace of mind.</p>
+                        <ul>
+                            <li>Pre-purchase inspections</li>
+                            <li>Safety & emissions testing</li>
+                            <li>Used car evaluations</li>
+                            <li>Trade-in appraisals</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="financing" class="financing">
+            <div class="container">
+                <h2>Financing Options</h2>
+                <p>Get the car you want with flexible financing solutions tailored to your needs.</p>
+
+                <div class="financing-content">
+                    <div class="financing-options">
+                        <div class="finance-option">
+                            <h3>🚗 Auto Loans</h3>
+                            <p>Competitive rates for new and used vehicle purchases</p>
+                            <ul>
+                                <li>Terms from 24-84 months</li>
+                                <li>Rates starting at 3.9% APR</li>
+                                <li>Quick pre-approval process</li>
+                                <li>No down payment required</li>
+                            </ul>
+                        </div>
+
+                        <div class="finance-option">
+                            <h3>🔄 Refinancing</h3>
+                            <p>Lower your monthly payments with refinancing options</p>
+                            <ul>
+                                <li>Reduce current interest rate</li>
+                                <li>Extend loan term if needed</li>
+                                <li>Cash out available</li>
+                                <li>Improve credit utilization</li>
+                            </ul>
+                        </div>
+
+                        <div class="finance-option">
+                            <h3>💰 Lease Options</h3>
+                            <p>Drive newer vehicles with lower monthly payments</p>
+                            <ul>
+                                <li>$0 down lease options</li>
+                                <li>24-36 month terms</li>
+                                <li>Lower monthly payments</li>
+                                <li>Drive new cars every few years</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="finance-cta">
+                        <h3>Ready to Get Started?</h3>
+                        <p>Contact our financing specialists to find the perfect solution for you.</p>
+                        <a href="#contact" class="finance-btn">Apply for Financing</a>
+                        <p class="finance-note">*Rates and terms subject to credit approval. Contact us for current rates.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="about">
+            <div class="container">
+                <h2>About ByCar</h2>
+                <p>Your trusted partner in automotive excellence since 2010.</p>
+
+                <div class="about-content">
+                    <div class="about-text">
+                        <h3>Our Story</h3>
+                        <p>ByCar was founded with a simple mission: to provide exceptional automotive services with integrity, transparency, and customer satisfaction. Over the years, we've built a reputation for quality vehicles, honest pricing, and unparalleled customer service.</p>
+
+                        <h3>Why Choose Us?</h3>
+                        <ul>
+                            <li><strong>Quality Assurance:</strong> Every vehicle undergoes rigorous inspection</li>
+                            <li><strong>Transparent Pricing:</strong> No hidden fees or surprise charges</li>
+                            <li><strong>Expert Team:</strong> Certified professionals with years of experience</li>
+                            <li><strong>Customer First:</strong> Your satisfaction is our top priority</li>
+                            <li><strong>Community Focused:</strong> Supporting local initiatives and charities</li>
+                        </ul>
+                    </div>
+
+                    <div class="about-stats">
+                        <div class="stat">
+                            <div class="stat-number">5000+</div>
+                            <div class="stat-label">Happy Customers</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">10+</div>
+                            <div class="stat-label">Years Experience</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">1000+</div>
+                            <div class="stat-label">Vehicles Sold</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">24/7</div>
+                            <div class="stat-label">Support Available</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="faq">
+            <div class="container">
+                <h2>Frequently Asked Questions</h2>
+                <p>Find answers to common questions about buying, selling, and servicing vehicles.</p>
+
+                <div class="faq-content">
+                    <div class="faq-item">
+                        <h3>🚗 How do I buy a car from ByCar?</h3>
+                        <p>Browse our inventory online, contact our sales team, schedule a test drive, and complete the purchase with our financing specialists. We make the process simple and transparent.</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>💰 What financing options do you offer?</h3>
+                        <p>We offer competitive auto loans, lease options, and refinancing. Our financing team works with multiple lenders to find the best rates for your situation.</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>🔧 Do you offer vehicle service?</h3>
+                        <p>Yes! Our certified technicians provide comprehensive maintenance, repair, detailing, and performance upgrade services. Schedule an appointment today.</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>📋 What documents do I need to sell my car?</h3>
+                        <p>You'll need your vehicle title, current registration, proof of insurance, and identification. Our team will guide you through the entire process.</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>⚡ How long does the buying process take?</h3>
+                        <p>Most purchases can be completed in 1-2 days once you've found the right vehicle and secured financing. We strive to make the process as efficient as possible.</p>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>🛡️ Do you offer warranties?</h3>
+                        <p>Yes, we offer extended warranty options on all vehicles. Our certified pre-owned vehicles come with comprehensive warranties for peace of mind.</p>
+                    </div>
+                </div>
+
+                <div class="faq-cta">
+                    <p>Can't find the answer you're looking for?</p>
+                    <a href="#contact" class="faq-btn">Contact Us</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ByCar</h3>
+                    <p>Your trusted source for quality vehicles.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#inventory">Inventory</a></li>
+                        <li><a href="#sell-car">Sell Your Car</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <div class="contact-item">
+                        <strong>Email:</strong>
+                        <p>info@bycar.com</p>
+                        <p>sales@bycar.com</p>
+                    </div>
+                    <div class="contact-item">
+                        <strong>Phone:</strong>
+                        <p>(555) 123-4567</p>
+                        <p>Toll-Free: 1-800-BYCAR-01</p>
+                    </div>
+                    <div class="contact-item">
+                        <strong>Address:</strong>
+                        <p>123 Auto Plaza Drive</p>
+                        <p>Suite 100</p>
+                        <p>Car City, CC 12345</p>
+                    </div>
+                    <div class="contact-item">
+                        <strong>Business Hours:</strong>
+                        <p>Mon-Fri: 9:00 AM - 8:00 PM</p>
+                        <p>Sat: 9:00 AM - 6:00 PM</p>
+                        <p>Sun: 11:00 AM - 5:00 PM</p>
+                    </div>
+                    <div class="social-links">
+                        <h4>Follow Us</h4>
+                        <div class="social-icons">
+                            <a href="#" class="social-link" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="social-link" title="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="social-link" title="Twitter"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-link" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2027 ByCar. All rights reserved OBi.</p>
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+                    <div class="theme-toggle-slider"></div>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="back-to-top" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Car Details Modal -->
+    <div id="car-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-body">
+                <div class="modal-image">
+                    <img id="modal-car-image" src="" alt="">
+                </div>
+                <div class="modal-details">
+                    <h2 id="modal-car-title"></h2>
+                    <div class="modal-price-section">
+                        <span id="modal-car-price" class="modal-price"></span>
+                        <span id="modal-condition-badge" class="condition-badge"></span>
+                    </div>
+                    <p id="modal-car-description" class="modal-description"></p>
+
+                    <div class="specs-grid">
+                        <div class="spec-item">
+                            <h4>Year</h4>
+                            <p id="modal-year"></p>
+                        </div>
+                        <div class="spec-item">
+                            <h4>Make</h4>
+                            <p id="modal-make"></p>
+                        </div>
+                        <div class="spec-item">
+                            <h4>Model</h4>
+                            <p id="modal-model"></p>
+                        </div>
+                        <div class="spec-item">
+                            <h4>Mileage</h4>
+                            <p id="modal-mileage"></p>
+                        </div>
+                        <div class="spec-item">
+                            <h4>Engine</h4>
+                            <p id="modal-engine"></p>
+                        </div>
+                        <div class="spec-item">
+                            <h4>Transmission</h4>
+                            <p id="modal-transmission"></p>
+                        </div>
+                        <div class="spec-item">
+                            <h4>Fuel Type</h4>
+                            <p id="modal-fuel"></p>
+                        </div>
+                        <div class="spec-item">
+                            <h4>Color</h4>
+                            <p id="modal-color"></p>
+                        </div>
+                        <div class="spec-item">
+                            <h4>Drivetrain</h4>
+                            <p id="modal-drivetrain"></p>
+                        </div>
+                    </div>
+
+                    <div class="features-section">
+                        <h3>Features</h3>
+                        <ul id="modal-features" class="features-list"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
