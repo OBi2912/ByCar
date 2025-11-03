@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeForms();
     initializeThemeToggle();
     initializeBackToTop();
+    initializeModalActions();
 });
 
 // Setup event listeners for search and filter
@@ -118,6 +119,53 @@ function createCarCard(car) {
     // Add click event to show more details (could be expanded later)
     card.addEventListener('click', () => {
         showCarDetails(car);
+    });
+
+    return card;
+}
+
+// Initialize modal action buttons
+function initializeModalActions() {
+    // Event delegation for modal action buttons
+    document.addEventListener('click', (e) => {
+        if (e.target.matches('.modal-buy-btn') || e.target.closest('.modal-buy-btn')) {
+            const modal = e.target.closest('.modal');
+            if (modal) {
+                // Find the car data from the modal content
+                const carTitle = modal.querySelector('#modal-car-title').textContent;
+                const carPrice = modal.querySelector('#modal-car-price').textContent;
+
+                // Parse car data (this is a simplified approach - in a real app you'd store car data)
+                const carData = {
+                    make: modal.querySelector('#modal-make').textContent,
+                    model: modal.querySelector('#modal-model').textContent,
+                    year: parseInt(modal.querySelector('#modal-year').textContent),
+                    price: parseFloat(carPrice.replace(/[$,]/g, '')),
+                    image: modal.querySelector('#modal-car-image').src,
+                    condition: modal.querySelector('#modal-condition-badge').textContent.toLowerCase()
+                };
+
+                handleBuyNow(carData);
+            }
+        }
+
+        if (e.target.matches('.modal-contact-btn') || e.target.closest('.modal-contact-btn')) {
+            const modal = e.target.closest('.modal');
+            if (modal) {
+                // Find the car data from the modal content
+                const carData = {
+                    make: modal.querySelector('#modal-make').textContent,
+                    model: modal.querySelector('#modal-model').textContent,
+                    year: parseInt(modal.querySelector('#modal-year').textContent),
+                    price: parseFloat(modal.querySelector('#modal-car-price').textContent.replace(/[$,]/g, '')),
+                    image: modal.querySelector('#modal-car-image').src,
+                    condition: modal.querySelector('#modal-condition-badge').textContent.toLowerCase()
+                };
+
+                handleContactSeller(carData);
+                closeModal();
+            }
+        }
     });
 
     return card;
@@ -648,6 +696,381 @@ function initializeBackToTop() {
 
     // Initial check
     toggleBackToTop();
+}
+
+// Modal action button handlers
+function handleBuyNow(car) {
+    // Create a purchase confirmation modal
+    const purchaseModal = document.createElement('div');
+    purchaseModal.className = 'purchase-modal-overlay';
+    purchaseModal.innerHTML = `
+        <div class="purchase-modal">
+            <div class="purchase-header">
+                <h3>Confirm Purchase</h3>
+                <button class="purchase-close">&times;</button>
+            </div>
+            <div class="purchase-body">
+                <div class="purchase-car-info">
+                    <img src="${car.image}" alt="${car.year} ${car.make} ${car.model}" class="purchase-car-image">
+                    <div class="purchase-car-details">
+                        <h4>${car.year} ${car.make} ${car.model}</h4>
+                        <p class="purchase-price">${formatPrice(car.price)}</p>
+                        <p class="purchase-condition">${car.condition === 'new' ? 'New' : 'Used'}</p>
+                    </div>
+                </div>
+                <div class="purchase-form">
+                    <h4>Enter Your Information</h4>
+                    <form id="purchase-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="buyer-name">Full Name *</label>
+                                <input type="text" id="buyer-name" name="buyerName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="buyer-email">Email *</label>
+                                <input type="email" id="buyer-email" name="buyerEmail" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="buyer-phone">Phone Number *</label>
+                                <input type="tel" id="buyer-phone" name="buyerPhone" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="buyer-address">Address</label>
+                                <input type="text" id="buyer-address" name="buyerAddress" placeholder="Street, City, State, ZIP">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="buyer-comments">Additional Comments</label>
+                            <textarea id="buyer-comments" name="buyerComments" rows="3" placeholder="Any special requests or questions..."></textarea>
+                        </div>
+                        <div class="purchase-actions">
+                            <button type="button" class="purchase-cancel">Cancel</button>
+                            <button type="submit" class="purchase-confirm">Complete Purchase</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(purchaseModal);
+
+    // Add event listeners
+    const closeBtn = purchaseModal.querySelector('.purchase-close');
+    const cancelBtn = purchaseModal.querySelector('.purchase-cancel');
+    const form = purchaseModal.querySelector('#purchase-form');
+
+    const closePurchaseModal = () => {
+        purchaseModal.remove();
+    };
+
+    closeBtn.addEventListener('click', closePurchaseModal);
+    cancelBtn.addEventListener('click', closePurchaseModal);
+
+    purchaseModal.addEventListener('click', (e) => {
+        if (e.target === purchaseModal) {
+            closePurchaseModal();
+        }
+    });
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        handlePurchaseSubmit(car, new FormData(form));
+        closePurchaseModal();
+    });
+
+    // Add styles for purchase modal
+    const style = document.createElement('style');
+    style.textContent = `
+        .purchase-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        .purchase-modal {
+            background: var(--modal-bg);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--modal-border);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .purchase-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .purchase-header h3 {
+            color: var(--text-primary);
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .purchase-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .purchase-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        .purchase-body {
+            padding: 2rem;
+        }
+
+        .purchase-car-info {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .purchase-car-image {
+            width: 120px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .purchase-car-details h4 {
+            color: var(--text-primary);
+            margin: 0 0 0.5rem 0;
+            font-size: 1.2rem;
+        }
+
+        .purchase-price {
+            color: #4CAF50;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 0.25rem 0;
+        }
+
+        .purchase-condition {
+            color: var(--text-secondary);
+            margin: 0.25rem 0;
+            text-transform: capitalize;
+        }
+
+        .purchase-form h4 {
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+
+        .purchase-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .purchase-cancel {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .purchase-cancel:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--border-color-hover);
+        }
+
+        .purchase-confirm {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .purchase-confirm:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .purchase-car-info {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .purchase-car-image {
+                width: 100%;
+                height: 150px;
+            }
+
+            .purchase-actions {
+                flex-direction: column;
+            }
+
+            .purchase-cancel,
+            .purchase-confirm {
+                width: 100%;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+function handleContactSeller(car) {
+    // Scroll to contact section and pre-fill some information
+    const contactSection = document.getElementById('contact');
+    contactSection.scrollIntoView({ behavior: 'smooth' });
+
+    // Pre-fill subject with car information
+    const subjectSelect = document.getElementById('contact-subject');
+    const messageTextarea = document.getElementById('contact-message');
+
+    subjectSelect.value = 'sales';
+    messageTextarea.value = `Hi, I'm interested in the ${car.year} ${car.make} ${car.model} listed for ${formatPrice(car.price)}. Please provide more information about this vehicle.`;
+
+    // Add a small delay to ensure smooth scrolling completes
+    setTimeout(() => {
+        messageTextarea.focus();
+        messageTextarea.setSelectionRange(messageTextarea.value.length, messageTextarea.value.length);
+    }, 1000);
+}
+
+function handlePurchaseSubmit(car, formData) {
+    const purchaseData = {
+        car: car,
+        buyer: {
+            name: formData.get('buyerName'),
+            email: formData.get('buyerEmail'),
+            phone: formData.get('buyerPhone'),
+            address: formData.get('buyerAddress'),
+            comments: formData.get('buyerComments')
+        },
+        timestamp: new Date().toISOString()
+    };
+
+    // Create success notification
+    const successNotification = document.createElement('div');
+    successNotification.className = 'purchase-success-notification';
+    successNotification.innerHTML = `
+        <div class="success-content">
+            <div class="success-icon">✓</div>
+            <h3>Purchase Request Submitted!</h3>
+            <p>Thank you for your interest in the ${car.year} ${car.make} ${car.model}!</p>
+            <p>We'll contact you at <strong>${purchaseData.buyer.email}</strong> within 24 hours to complete the transaction.</p>
+            <button class="success-close-btn">Continue</button>
+        </div>
+    `;
+
+    document.body.appendChild(successNotification);
+
+    // Add styles
+    const style = document.createElement('style');
+    style.textContent = `
+        .purchase-success-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--modal-bg);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--modal-border);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            z-index: 10002;
+            animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .success-content h3 {
+            color: var(--text-primary);
+            margin: 1rem 0;
+            font-size: 1.5rem;
+        }
+
+        .success-content p {
+            color: var(--text-secondary);
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+
+        .success-icon {
+            font-size: 3rem;
+            color: #4CAF50;
+            margin-bottom: 1rem;
+        }
+
+        .success-close-btn {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .success-close-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Handle close
+    const closeBtn = successNotification.querySelector('.success-close-btn');
+    closeBtn.addEventListener('click', () => {
+        successNotification.remove();
+        style.remove();
+    });
+
+    // Auto close after 5 seconds
+    setTimeout(() => {
+        if (successNotification.parentNode) {
+            successNotification.remove();
+            style.remove();
+        }
+    }, 5000);
+
+    // In a real application, you would send this data to a server
+    console.log('Purchase submitted:', purchaseData);
 }
 
 // Add visual enhancements after cars are displayed

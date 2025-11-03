@@ -1370,6 +1370,102 @@ footer {
     }
 }
 
+/* Modal Action Buttons */
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    animation: modalActionsFadeIn 0.6s ease-out 0.8s both;
+}
+
+@keyframes modalActionsFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-action-btn {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modal-action-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.modal-action-btn:hover::before {
+    left: 100%;
+}
+
+.modal-action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-action-btn:active {
+    transform: translateY(0);
+    transition: transform 0.1s ease;
+}
+
+.modal-buy-btn {
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    color: white;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.modal-buy-btn:hover {
+    background: linear-gradient(135deg, #66BB6A, #81C784);
+    box-shadow: 0 8px 30px rgba(76, 175, 80, 0.4);
+}
+
+.modal-contact-btn {
+    background: linear-gradient(135deg, #2196F3, #42A5F5);
+    color: white;
+    box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+}
+
+.modal-contact-btn:hover {
+    background: linear-gradient(135deg, #42A5F5, #64B5F6);
+    box-shadow: 0 8px 30px rgba(33, 150, 243, 0.4);
+}
+
+.modal-action-btn i {
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+}
+
+.modal-action-btn:hover i {
+    transform: scale(1.1);
+}
+
 /* React-like Modal Portal Effect */
 .modal::before {
     content: '';
@@ -1402,6 +1498,16 @@ footer {
 
     .modal-price {
         font-size: 1.5rem;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .modal-action-btn {
+        padding: 0.875rem 1.25rem;
+        font-size: 0.95rem;
     }
 }
 
@@ -1459,6 +1565,11 @@ footer {
     .features-list {
         grid-template-columns: 1fr;
         justify-items: center;
+    }
+
+    .modal-actions {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
     }
 }
 
