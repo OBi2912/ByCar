@@ -363,6 +363,8 @@ function showCarDetails(car) {
 
 // Close modal function
 function closeModal() {
+    document.body.style.overflow = 'auto'; // Restore scrolling immediately for mobile compatibility
+
     // Add exit animation
     modal.style.animation = 'modalSlideOut 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards';
 
@@ -370,7 +372,6 @@ function closeModal() {
     setTimeout(() => {
         modal.style.display = 'none';
         modal.style.animation = ''; // Reset animation
-        document.body.style.overflow = 'auto'; // Restore scrolling
     }, 400);
 }
 
@@ -1150,22 +1151,32 @@ function handleBuyNow(car) {
 }
 
 function handleContactSeller(car) {
+    // Restore body overflow first so scrolling is possible
+    document.body.style.overflow = 'auto';
+
     // Scroll to contact section and pre-fill some information
     const contactSection = document.getElementById('contact');
-    contactSection.scrollIntoView({ behavior: 'smooth' });
+    if (contactSection) {
+        // Small delay to ensure modal start closing and body is scrollable
+        setTimeout(() => {
+            contactSection.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+    }
 
     // Pre-fill subject with car information
     const subjectSelect = document.getElementById('contact-subject');
     const messageTextarea = document.getElementById('contact-message');
 
-    subjectSelect.value = 'sales';
-    messageTextarea.value = `Hi, I'm interested in the ${car.year} ${car.make} ${car.model} listed for ${formatPrice(car.price)}. Please provide more information about this vehicle.`;
+    if (subjectSelect) subjectSelect.value = 'sales';
+    if (messageTextarea) {
+        messageTextarea.value = `Hi, I'm interested in the ${car.year} ${car.make} ${car.model} listed for ${formatPrice(car.price)}. Please provide more information about this vehicle.`;
 
-    // Add a small delay to ensure smooth scrolling completes
-    setTimeout(() => {
-        messageTextarea.focus();
-        messageTextarea.setSelectionRange(messageTextarea.value.length, messageTextarea.value.length);
-    }, 1000);
+        // Add a small delay to ensure smooth scrolling completes
+        setTimeout(() => {
+            messageTextarea.focus();
+            messageTextarea.setSelectionRange(messageTextarea.value.length, messageTextarea.value.length);
+        }, 1200);
+    }
 }
 
 function handlePurchaseSubmit(car, formData) {
