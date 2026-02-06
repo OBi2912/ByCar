@@ -13,8 +13,10 @@ const cars = [
         color: "Pearl White",
         drivetrain: "FWD",
         features: ["Backup Camera", "Bluetooth", "Apple CarPlay", "Lane Keep Assist"],
+        features_es: ["Cámara de Reversa", "Bluetooth", "Apple CarPlay", "Asistencia de Carril"],
         image: "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        description: "The Toyota Camry offers exceptional reliability and comfort with modern technology features."
+        description: "The Toyota Camry offers exceptional reliability and comfort with modern technology features.",
+        description_es: "El Toyota Camry ofrece una confiabilidad y comodidad excepcionales con características tecnológicas modernas."
     },
     {
         id: 2,
@@ -30,8 +32,10 @@ const cars = [
         color: "Lunar Silver",
         drivetrain: "FWD",
         features: ["Honda Sensing", "Sunroof", "Heated Seats", "USB Ports"],
+        features_es: ["Honda Sensing", "Quemacocos", "Asientos con Calefacción", "Puertos USB"],
         image: "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        description: "Well-maintained Honda Civic with low mileage and excellent fuel economy."
+        description: "Well-maintained Honda Civic with low mileage and excellent fuel economy.",
+        description_es: "Honda Civic bien mantenido con bajo kilometraje y excelente economía de combustible."
     },
     {
         id: 3,
@@ -47,8 +51,10 @@ const cars = [
         color: "Oxford White",
         drivetrain: "4WD",
         features: ["Tow Package", "Bed Liner", "Backup Camera", "SYNC 4"],
+        features_es: ["Paquete de Arrastre", "Protector de Caja", "Cámara de Reversa", "SYNC 4"],
         image: "https://vehicle-images.dealerinspire.com/9836-110008749/1FTFW7L84SFA30458/10a8470c6f26ba60ee23f8b18196b906.jpg",
-        description: "Powerful and capable Ford F-150 perfect for work or play with advanced towing capabilities."
+        description: "Powerful and capable Ford F-150 perfect for work or play with advanced towing capabilities.",
+        description_es: "Ford F-150 potente y capaz, perfecta para el trabajo o la diversión con capacidades avanzadas de remolque."
     },
     {
         id: 4,
@@ -64,8 +70,10 @@ const cars = [
         color: "Alpine White",
         drivetrain: "RWD",
         features: ["Navigation", "Premium Audio", "Leather Seats", "Adaptive Cruise Control"],
+        features_es: ["Navegación", "Audio Premium", "Asientos de Piel", "Control de Crucero Adaptativo"],
         image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        description: "Luxurious BMW 3 Series with sporty handling and premium interior features."
+        description: "Luxurious BMW 3 Series with sporty handling and premium interior features.",
+        description_es: "Lujoso BMW Serie 3 con manejo deportivo y características interiores premium."
     },
     {
         id: 5,
@@ -81,8 +89,10 @@ const cars = [
         color: "Pearl White",
         drivetrain: "RWD",
         features: ["Autopilot", "Supercharger Access", "Glass Roof", "Premium Interior"],
+        features_es: ["Autopilot", "Acceso a Supercarga", "Techo de Cristal", "Interior Premium"],
         image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        description: "Cutting-edge Tesla Model 3 with advanced autonomous driving capabilities and instant torque."
+        description: "Cutting-edge Tesla Model 3 with advanced autonomous driving capabilities and instant torque.",
+        description_es: "Tesla Model 3 de vanguardia con capacidades avanzadas de conducción autónoma y torque instantáneo."
     },
     {
         id: 6,
@@ -98,8 +108,10 @@ const cars = [
         color: "Firecracker Red",
         drivetrain: "4WD",
         features: ["Removable Doors", "Off-Road Package", "Hard Top", "Rock Rails"],
+        features_es: ["Puertas Desmontables", "Paquete Off-Road", "Techo Rígido", "Rieles para Rocas"],
         image: "https://images.unsplash.com/photo-1606220838315-056192d5e927?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        description: "Iconic Jeep Wrangler ready for any adventure with legendary off-road capability."
+        description: "Iconic Jeep Wrangler ready for any adventure with legendary off-road capability.",
+        description_es: "Icónico Jeep Wrangler listo para cualquier aventura con su legendaria capacidad off-road."
     },
     {
         id: 7,
@@ -115,8 +127,10 @@ const cars = [
         color: "Obsidian Black",
         drivetrain: "RWD",
         features: ["MBUX System", "Burmester Audio", "Panoramic Sunroof", "Ambient Lighting"],
+        features_es: ["Sistema MBUX", "Audio Burmester", "Quemacocos Panorámico", "Iluminación Ambiental"],
         image: "https://images.unsplash.com/photo-1617788138017-80ad40651399?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        description: "Sophisticated Mercedes-Benz C-Class combining luxury, performance, and cutting-edge technology."
+        description: "Sophisticated Mercedes-Benz C-Class combining luxury, performance, and cutting-edge technology.",
+        description_es: "Sofisticado Mercedes-Benz Clase C que combina lujo, rendimiento y tecnología de punta."
     },
     {
         id: 8,
@@ -132,8 +146,10 @@ const cars = [
         color: "Summit White",
         drivetrain: "4WD",
         features: ["Towing Package", "All-Star Edition", "Backup Camera", "Apple CarPlay"],
+        features_es: ["Paquete de Remolque", "Edición All-Star", "Cámara de Reversa", "Apple CarPlay"],
         image: "https://www.copilotsearch.com/uploads/2024_chevrolet_silverado_2500hd_au_siam_2023.webp",
-        description: "Versatile Chevrolet Silverado 1500 with powerful V8 engine and advanced towing technology."
+        description: "Versatile Chevrolet Silverado 1500 with powerful V8 engine and advanced towing technology.",
+        description_es: "Versátil Chevrolet Silverado 1500 con potente motor V8 y tecnología de remolque avanzada."
     },
     {
         id: 9,
@@ -149,8 +165,10 @@ const cars = [
         color: "Mythos Black",
         drivetrain: "AWD",
         features: ["Virtual Cockpit", "Bang & Olufsen Audio", "Panoramic Roof", "Adaptive Air Suspension"],
+        features_es: ["Virtual Cockpit", "Audio Bang & Olufsen", "Techo Panorámico", "Suspensión de Aire Adaptativa"],
         image: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        description: "Premium Audi Q5 SUV with all-wheel drive and luxurious interior appointments."
+        description: "Premium Audi Q5 SUV with all-wheel drive and luxurious interior appointments.",
+        description_es: "SUV Audi Q5 premium con tracción integral y lujosos acabados interiores."
     },
     {
         id: 10,
@@ -166,7 +184,9 @@ const cars = [
         color: "Scarlet Ember",
         drivetrain: "FWD",
         features: ["Nissan Safety Shield", "ProPILOT Assist", "Bose Audio", "Heated Seats"],
+        features_es: ["Nissan Safety Shield", "ProPILOT Assist", "Audio Bose", "Asientos con Calefacción"],
         image: "https://di-uploads-pod27.dealerinspire.com/cbsqualitycars/uploads/2020/11/Used-Nissan-Altima-2015-Nissan-Altima-front.jpg",
-        description: "Stylish Nissan Altima with advanced safety features and comfortable ride quality."
+        description: "Stylish Nissan Altima with advanced safety features and comfortable ride quality.",
+        description_es: "Elegante Nissan Altima con características de seguridad avanzadas y una conducción cómoda."
     }
 ];

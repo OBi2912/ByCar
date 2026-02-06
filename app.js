@@ -3,30 +3,93 @@ const carListings = document.getElementById('car-listings');
 const searchInput = document.getElementById('search-input');
 const conditionFilter = document.getElementById('condition-filter');
 
-// Theme management
+// Theme and Language management
+const state = {
+    lang: localStorage.getItem('language') || 'en',
+    theme: localStorage.getItem('theme') || 'dark'
+};
+
 function initializeTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', savedTheme);
+    document.documentElement.setAttribute('data-theme', state.theme);
+}
+
+function initializeLanguage() {
+    updateContent();
+}
+
+function toggleLanguage() {
+    console.log('Toggling language from:', state.lang);
+    state.lang = state.lang === 'en' ? 'es' : 'en';
+    localStorage.setItem('language', state.lang);
+    updateContent();
+    console.log('Language toggled to:', state.lang);
+}
+
+function updateContent() {
+    // Update all elements with data-i18n attribute
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+
+        // Handle placeholders
+        const t = window.translations;
+        if (!t || !t[state.lang]) return;
+
+        if (key.startsWith('[placeholder]')) {
+            const cleanKey = key.replace('[placeholder]', '');
+            if (t[state.lang][cleanKey]) {
+                element.placeholder = t[state.lang][cleanKey];
+            }
+        } else {
+            if (t[state.lang][key]) {
+                element.textContent = t[state.lang][key];
+            }
+        }
+    });
+
+    // Update language toggle button
+    const langToggle = document.getElementById('lang-toggle');
+    if (langToggle && window.translations && window.translations[state.lang]) {
+        langToggle.querySelector('.lang-text').textContent = window.translations[state.lang]['lang.switch'];
+    }
+
+    // Re-render cars to update dynamic content
+    try {
+        filterCars();
+    } catch (e) {
+        console.error('Error updating car listings:', e);
+    }
 }
 
 function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
+    console.log('Toggling theme from:', state.theme);
+    state.theme = state.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', state.theme);
+    localStorage.setItem('theme', state.theme);
+    console.log('Theme toggled to:', state.theme);
 }
 
 // Initialize the application
-document.addEventListener('DOMContentLoaded', function() {
-    initializeTheme();
-    displayCars(cars);
-    setupEventListeners();
-    initializeModal();
-    initializeForms();
-    initializeThemeToggle();
-    initializeBackToTop();
-    initializeModalActions();
+// Initialize the application
+document.addEventListener('DOMContentLoaded', function () {
+    try {
+        initializeTheme();
+        initializeControls(); // Move controls initialization up
+        initializeLanguage();
+
+        try {
+            displayCars(cars);
+        } catch (e) {
+            console.error('Error displaying cars:', e);
+        }
+
+        setupEventListeners();
+        initializeModal();
+        initializeForms();
+        initializeBackToTop();
+        initializeModalActions();
+    } catch (e) {
+        console.error('Error initializing app:', e);
+    }
 });
 
 // Setup event listeners for search and filter
@@ -42,8 +105,8 @@ function filterCars() {
 
     const filteredCars = cars.filter(car => {
         const matchesSearch = car.make.toLowerCase().includes(searchTerm) ||
-                             car.model.toLowerCase().includes(searchTerm) ||
-                             car.year.toString().includes(searchTerm);
+            car.model.toLowerCase().includes(searchTerm) ||
+            car.year.toString().includes(searchTerm);
 
         const matchesCondition = conditionValue === 'all' || car.condition === conditionValue;
 
@@ -58,7 +121,8 @@ function displayCars(carsToDisplay) {
     carListings.innerHTML = '';
 
     if (carsToDisplay.length === 0) {
-        carListings.innerHTML = '<p style="text-align: center; color: #ccc; font-size: 1.2rem; grid-column: 1 / -1;">No cars found matching your criteria.</p>';
+        const noCarsMsg = window.translations[state.lang]['inventory.no_cars'] || 'No cars found matching your criteria.';
+        carListings.innerHTML = `<p style="text-align: center; color: #ccc; font-size: 1.2rem; grid-column: 1 / -1;">${noCarsMsg}</p>`;
         return;
     }
 
@@ -71,15 +135,72 @@ function displayCars(carsToDisplay) {
     enhanceDisplayedCars();
 }
 
+// Helper to translate car specs
+function translateCarSpec(type, value) {
+    if (!value) return value;
+    const t = window.translations[state.lang];
+    if (!t) return value;
+
+    const val = value.toLowerCase();
+
+    if (type === 'transmission') {
+        if (val.includes('auto')) return t['car.trans.auto'];
+        if (val.includes('manual')) return t['car.trans.manual'];
+        if (val.includes('cvt')) return t['car.trans.cvt'];
+        if (val.includes('single')) return t['car.trans.single'];
+    }
+
+    if (type === 'fuel') {
+        if (val.includes('gas')) return t['car.fuel.gas'];
+        if (val.includes('electric')) return t['car.fuel.electric'];
+        if (val.includes('hybrid')) return t['car.fuel.hybrid'];
+        if (val.includes('diesel')) return t['car.fuel.diesel'];
+    }
+
+    if (type === 'drive') {
+        if (val.includes('fwd')) return t['car.drive.fwd'];
+        if (val.includes('rwd')) return t['car.drive.rwd'];
+        if (val.includes('awd')) return t['car.drive.awd'];
+        if (val.includes('4wd')) return t['car.drive.4wd'];
+    }
+
+    if (type === 'color') {
+        const colors = ['white', 'black', 'silver', 'red', 'blue', 'gray'];
+        for (const color of colors) {
+            if (val.includes(color)) {
+                return value.replace(new RegExp(color, 'i'), t[`car.color.${color}`]);
+            }
+        }
+    }
+
+    return value;
+}
+
 // Create a car card element
 function createCarCard(car) {
     const card = document.createElement('div');
     card.className = 'car-card';
 
     const conditionClass = car.condition === 'new' ? 'condition-new' : 'condition-used';
-    const conditionText = car.condition === 'new' ? 'New' : 'Used';
+    const conditionText = state.lang === 'es'
+        ? (car.condition === 'new' ? 'Nuevo' : 'Usado')
+        : (car.condition === 'new' ? 'New' : 'Used');
     const formattedPrice = formatPrice(car.price);
     const formattedMileage = car.mileage.toLocaleString();
+
+    const t = window.translations[state.lang];
+    if (!t) return card; // Safety check
+
+    const getLabel = (key) => (t[key] ? t[key].replace(':', '') : key);
+
+    const mileageLabel = getLabel('car.mileage');
+    const engineLabel = getLabel('car.engine');
+    const transmissionLabel = getLabel('car.transmission');
+    const fuelLabel = getLabel('car.fuel');
+    const colorLabel = getLabel('car.color');
+    const drivetrainLabel = getLabel('car.drivetrain');
+    const milesText = state.lang === 'es' ? 'millas' : 'miles';
+    const newText = state.lang === 'es' ? 'Nuevo' : 'New';
 
     card.innerHTML = `
         <img src="${car.image}" alt="${car.year} ${car.make} ${car.model}" class="car-image" loading="lazy">
@@ -87,28 +208,28 @@ function createCarCard(car) {
             <h3 class="car-title">${car.year} ${car.make} ${car.model}</h3>
             <div class="car-details">
                 <div class="car-detail">
-                    <span>Mileage:</span>
-                    <span>${car.mileage === 0 ? 'New' : formattedMileage + ' miles'}</span>
+                    <span>${mileageLabel}:</span>
+                    <span>${car.mileage === 0 ? newText : formattedMileage + ' ' + milesText}</span>
                 </div>
                 <div class="car-detail">
-                    <span>Engine:</span>
+                    <span>${engineLabel}:</span>
                     <span>${car.engine}</span>
                 </div>
                 <div class="car-detail">
-                    <span>Transmission:</span>
-                    <span>${car.transmission}</span>
+                    <span>${transmissionLabel}:</span>
+                    <span>${translateCarSpec('transmission', car.transmission)}</span>
                 </div>
                 <div class="car-detail">
-                    <span>Fuel:</span>
-                    <span>${car.fuelType}</span>
+                    <span>${fuelLabel}:</span>
+                    <span>${translateCarSpec('fuel', car.fuelType)}</span>
                 </div>
                 <div class="car-detail">
-                    <span>Color:</span>
-                    <span>${car.color}</span>
+                    <span>${colorLabel}:</span>
+                    <span>${translateCarSpec('color', car.color)}</span>
                 </div>
                 <div class="car-detail">
-                    <span>Drivetrain:</span>
-                    <span>${car.drivetrain}</span>
+                    <span>${drivetrainLabel}:</span>
+                    <span>${translateCarSpec('drive', car.drivetrain)}</span>
                 </div>
             </div>
             <div class="car-price">${formattedPrice}</div>
@@ -132,7 +253,6 @@ function initializeModalActions() {
             const modal = e.target.closest('.modal');
             if (modal) {
                 // Find the car data from the modal content
-                const carTitle = modal.querySelector('#modal-car-title').textContent;
                 const carPrice = modal.querySelector('#modal-car-price').textContent;
 
                 // Parse car data (this is a simplified approach - in a real app you'd store car data)
@@ -167,8 +287,6 @@ function initializeModalActions() {
             }
         }
     });
-
-    return card;
 }
 
 // Format price with currency
@@ -186,29 +304,39 @@ let modal, closeModalBtn;
 
 // Show car details in modal
 function showCarDetails(car) {
+    const t = window.translations[state.lang];
+    if (!t) return;
+
     // Populate modal with car data
     document.getElementById('modal-car-image').src = car.image;
     document.getElementById('modal-car-image').alt = `${car.year} ${car.make} ${car.model}`;
     document.getElementById('modal-car-title').textContent = `${car.year} ${car.make} ${car.model}`;
     document.getElementById('modal-car-price').textContent = formatPrice(car.price);
-    document.getElementById('modal-car-description').textContent = car.description;
+
+    // Use Spanish description if available
+    document.getElementById('modal-car-description').textContent = state.lang === 'es' && car.description_es ? car.description_es : car.description;
 
     // Set condition badge
     const conditionBadge = document.getElementById('modal-condition-badge');
-    conditionBadge.textContent = car.condition === 'new' ? 'New' : 'Used';
+    conditionBadge.textContent = state.lang === 'es'
+        ? (car.condition === 'new' ? 'Nuevo' : 'Usado')
+        : (car.condition === 'new' ? 'New' : 'Used');
     conditionBadge.className = `condition-badge ${car.condition === 'new' ? 'condition-new' : 'condition-used'}`;
+
+    const milesText = state.lang === 'es' ? 'millas' : 'miles';
+    const newText = state.lang === 'es' ? 'Nuevo' : 'New';
 
     // Populate specifications with staggered animation
     const specs = [
         { id: 'modal-year', value: car.year },
         { id: 'modal-make', value: car.make },
         { id: 'modal-model', value: car.model },
-        { id: 'modal-mileage', value: car.mileage === 0 ? 'New' : car.mileage.toLocaleString() + ' miles' },
+        { id: 'modal-mileage', value: car.mileage === 0 ? newText : car.mileage.toLocaleString() + ' ' + milesText },
         { id: 'modal-engine', value: car.engine },
-        { id: 'modal-transmission', value: car.transmission },
-        { id: 'modal-fuel', value: car.fuelType },
-        { id: 'modal-color', value: car.color },
-        { id: 'modal-drivetrain', value: car.drivetrain }
+        { id: 'modal-transmission', value: translateCarSpec('transmission', car.transmission) },
+        { id: 'modal-fuel', value: translateCarSpec('fuel', car.fuelType) },
+        { id: 'modal-color', value: translateCarSpec('color', car.color) },
+        { id: 'modal-drivetrain', value: translateCarSpec('drive', car.drivetrain) }
     ];
 
     specs.forEach((spec, index) => {
@@ -220,7 +348,8 @@ function showCarDetails(car) {
     // Populate features with staggered animation
     const featuresList = document.getElementById('modal-features');
     featuresList.innerHTML = '';
-    car.features.forEach((feature, index) => {
+    const carFeatures = state.lang === 'es' && car.features_es ? car.features_es : car.features;
+    carFeatures.forEach((feature, index) => {
         const li = document.createElement('li');
         li.textContent = feature;
         li.style.setProperty('--feature-index', index);
@@ -230,11 +359,6 @@ function showCarDetails(car) {
     // Show modal with smooth entrance
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden'; // Prevent background scrolling
-
-    // Add entrance sound effect (optional - requires audio file)
-    // const audio = new Audio('modal-open.mp3');
-    // audio.volume = 0.3;
-    // audio.play().catch(() => {}); // Ignore if audio fails
 }
 
 // Close modal function
@@ -296,6 +420,11 @@ function initializeModal() {
 function handleSellCarSubmit(event) {
     event.preventDefault();
 
+    // Get preview image if exists
+    const previewContainer = document.getElementById('image-preview');
+    const previewImg = previewContainer.querySelector('img');
+    const carImageBase64 = previewImg ? previewImg.src : 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+
     // Get form data
     const formData = new FormData(event.target);
     const carData = {
@@ -313,7 +442,7 @@ function handleSellCarSubmit(event) {
         transmission: formData.get('carTransmission'),
         description: formData.get('carDescription'),
         features: formData.get('carFeatures') ? formData.get('carFeatures').split(',').map(f => f.trim()) : [],
-        image: formData.get('carImage') || 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+        image: carImageBase64
     };
 
     // Validate required fields
@@ -324,11 +453,18 @@ function handleSellCarSubmit(event) {
     // Show success message
     showSellCarSuccess(carData);
 
-    // Reset form
+    // Reset form and preview
     event.target.reset();
+    previewContainer.innerHTML = '';
+    previewContainer.style.display = 'none';
+    const fileNameSpan = document.getElementById('file-name');
+    if (fileNameSpan) {
+        fileNameSpan.textContent = state.lang === 'es' ? 'Sin foto seleccionada' : 'No photo selected';
+        fileNameSpan.setAttribute('data-i18n', 'form.no_image');
+    }
 
     // In a real application, you would send this data to a server
-    console.log('Car listing submitted:', carData);
+    console.log('Car listing submitted with image:', carData);
 }
 
 function handleContactSubmit(event) {
@@ -380,16 +516,17 @@ function validateContactForm(data) {
 }
 
 function showContactSuccess(contactData) {
+    const t = window.translations[state.lang];
     // Create success modal/message
     const successModal = document.createElement('div');
     successModal.className = 'success-modal';
     successModal.innerHTML = `
         <div class="success-modal-content">
             <div class="success-icon">✓</div>
-            <h3>Message Sent!</h3>
-            <p>Thank you for contacting us, <strong>${contactData.name}</strong>!</p>
-            <p>We've received your message regarding <strong>${contactData.subject}</strong> and will get back to you at <strong>${contactData.email}</strong> within 24 hours.</p>
-            <button class="success-close-btn">Continue</button>
+            <h3>${t['success.message_sent']}</h3>
+            <p>${t['success.thank_you']} <strong>${contactData.name}</strong>!</p>
+            <p>${t['success.received']} <strong>${contactData.subject}</strong> ${t['success.contact_within']}</p>
+            <button class="success-close-btn">${t['success.continue']}</button>
         </div>
     `;
 
@@ -507,16 +644,17 @@ function validateSellCarForm(data) {
 }
 
 function showSellCarSuccess(carData) {
+    const t = window.translations[state.lang];
     // Create success modal/message
     const successModal = document.createElement('div');
     successModal.className = 'success-modal';
     successModal.innerHTML = `
         <div class="success-modal-content">
             <div class="success-icon">✓</div>
-            <h3>Car Listing Submitted!</h3>
-            <p>Thank you for listing your ${carData.year} ${carData.make} ${carData.model} with us.</p>
-            <p>We'll review your submission and contact you at <strong>${carData.sellerEmail}</strong> within 24 hours.</p>
-            <button class="success-close-btn">Continue</button>
+            <h3>${t['success.car_listed']}</h3>
+            <p>${t['success.car_listed_thanks']} ${carData.year} ${carData.make} ${carData.model}.</p>
+            <p>${t['success.car_listed_review']}</p>
+            <button class="success-close-btn">${t['success.continue']}</button>
         </div>
     `;
 
@@ -612,6 +750,7 @@ function initializeForms() {
     const sellForm = document.getElementById('sell-car-form');
     if (sellForm) {
         sellForm.addEventListener('submit', handleSellCarSubmit);
+        initializeImageUpload();
     }
 
     // Contact Form Handling
@@ -619,6 +758,35 @@ function initializeForms() {
     if (contactForm) {
         contactForm.addEventListener('submit', handleContactSubmit);
     }
+}
+
+// Initialize image upload and preview
+function initializeImageUpload() {
+    const fileInput = document.getElementById('car-photo-upload');
+    const fileNameSpan = document.getElementById('file-name');
+    const previewContainer = document.getElementById('image-preview');
+
+    if (!fileInput || !fileNameSpan || !previewContainer) return;
+
+    fileInput.addEventListener('change', function () {
+        const file = this.files[0];
+        if (file) {
+            // Update file name display
+            fileNameSpan.textContent = file.name;
+
+            // Create preview
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                previewContainer.innerHTML = `<img src="${e.target.result}" alt="Vehicle Preview">`;
+                previewContainer.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            fileNameSpan.textContent = state.lang === 'es' ? 'Sin foto seleccionada' : 'No photo selected';
+            previewContainer.innerHTML = '';
+            previewContainer.style.display = 'none';
+        }
+    });
 }
 
 // Smooth scrolling for navigation links
@@ -661,11 +829,41 @@ function addVisualEnhancements() {
     });
 }
 
-// Initialize theme toggle functionality
-function initializeThemeToggle() {
+// Initialize control buttons
+function initializeControls() {
     const themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
         themeToggle.addEventListener('click', toggleTheme);
+    }
+
+    const langToggle = document.getElementById('lang-toggle');
+    if (langToggle) {
+        langToggle.addEventListener('click', toggleLanguage);
+    }
+
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('mobile-menu-toggle');
+    const navMenu = document.getElementById('nav-menu');
+
+    if (menuToggle && navMenu) {
+        menuToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            const icon = menuToggle.querySelector('i');
+            if (icon.classList.contains('fa-bars')) {
+                icon.classList.replace('fa-bars', 'fa-times');
+            } else {
+                icon.classList.replace('fa-times', 'fa-bars');
+            }
+        });
+
+        // Close menu when clicking a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                const icon = menuToggle.querySelector('i');
+                icon.classList.replace('fa-times', 'fa-bars');
+            });
+        });
     }
 }
 
